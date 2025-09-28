@@ -19,6 +19,7 @@ The **Expense Tracker** is a Spring Boot-based application to track daily expens
   - Complete frontend dashboard for expense management
   - Analytics visualization
   - Integration of full frontend with backend APIs
+  - CSV
   
 
 ---
