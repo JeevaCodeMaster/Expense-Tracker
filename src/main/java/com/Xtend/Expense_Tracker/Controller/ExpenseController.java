@@ -3,9 +3,9 @@ package com.Xtend.Expense_Tracker.Controller;
 import java.io.ByteArrayOutputStream;
 import java.net.http.HttpHeaders;
 import java.util.List;
-
+import com.Xtend.Expense_Tracker.Helper.ExpenseCSVHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -65,6 +65,37 @@ public class ExpenseController {
 		
 		 service.deleteExpense(id);
 	}
+
+	@PostMapping("/import")
+    public ResponseEntity<String> importCSV(@RequestParam("file") MultipartFile file,
+                                            @RequestParam("userId") Long userId) {
+        if (file.isEmpty()) return ResponseEntity.badRequest().body("No file selected");
+
+        try {
+            List<Expense> expenses = ExpenseCSVHelper.csvToExpenses(file.getInputStream(), userRepo, catRepo, userId);
+            for (Expense e : expenses) expenseService.addExpenseDTO(e); // your service method
+            return ResponseEntity.ok("CSV imported successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportCSV(@RequestParam("userId") Long userId) {
+        try {
+            List<Expense> expenses = expenseService.getUserExpenses(userId);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ExpenseCSVHelper.expensesToCSV(expenses, os);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=expenses.csv");
+            headers.set(HttpHeaders.CONTENT_TYPE, "text/csv");
+
+            return new ResponseEntity<>(os.toByteArray(), headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 	
 
 
