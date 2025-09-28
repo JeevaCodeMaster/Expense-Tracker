@@ -36,7 +36,7 @@ The **Expense Tracker** is a Spring Boot-based application to track daily expens
 - PostgreSQL
 - Git
 - IDE Eclipse
-- Postman API
+- Postman API.
 
 ---
 
