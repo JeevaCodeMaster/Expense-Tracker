@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Expense Tracker</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+       <script>
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+        // Redirect if token missing
+        alert("Not logged in!");
+        window.location.href = "login.html";
+    } else {
+        console.log("Token found:", token);
+    }
+
+    </script>
+</head>
+<body>
+    <h2>Expense Tracker Dashboard</h2>
+    <button onclick="logout()">Logout</button>
+
+    <!-- ---------------- CATEGORY SECTION ---------------- -->
+    <h3>Manage Categories</h3>
+    <input type="text" id="categoryName" placeholder="Category Name">
+    <button onclick="addCategory()">Add Category</button>
+    <ul id="categoryList"></ul>
+
+    <!-- ---------------- EXPENSE SECTION ---------------- -->
+    <h3>Add Expense</h3>
+    <form id="expenseForm">
+        <input type="number" id="amount" placeholder="Amount" required><br>
+        <input type="text" id="description" placeholder="Description"><br>
+        <input type="date" id="date" required><br>
+        <select id="categorySelect" required></select><br>
+        <button type="submit">Add Expense</button>
+    </form>
+
+    <h3>Filter Expenses by Category</h3>
+    <select id="filterCategory" onchange="filterExpenses()">
+        <option value="">-- All Categories --</option>
+    </select>
+
+    <!-- ---------------- EXPENSE TABLE ---------------- -->
+    <h3>Your Expenses</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th><th>Amount</th><th>Description</th><th>Date</th><th>Category</th><th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="expenseTable"></tbody>
+    </table>
+
+    <!-- ---------------- CHARTS ---------------- -->
+    <h3>Analytics</h3>
+    <canvas id="monthlyChart"></canvas>
+    <canvas id="categoryChart"></canvas>
+</body>
+</html>
